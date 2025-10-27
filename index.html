@@ -5,14 +5,92 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cạnh Tranh Độc Quyền Kinh Tế</title>
+    <style>
+      /* CSS to position the iframe at the bottom-right */
+      iframe {
+        position: fixed;
+        bottom: 80px; /* Position above the button */
+        right: 20px;
+        width: 350px; 
+        height: 500px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: none; /* Initially hidden */
+      }
+
+      /* Fire animation for the button */
+      @keyframes fireAnimation {
+        0% {
+          box-shadow: 0 0 15px 5px rgba(255, 69, 0, 0.7), 0 0 25px 10px rgba(255, 69, 0, 0.5);
+          transform: scale(1);
+        }
+        50% {
+          box-shadow: 0 0 30px 10px rgba(255, 165, 0, 0.7), 0 0 50px 20px rgba(255, 165, 0, 0.5);
+          transform: scale(1.1);
+        }
+        100% {
+          box-shadow: 0 0 15px 5px rgba(255, 69, 0, 0.7), 0 0 25px 10px rgba(255, 69, 0, 0.5);
+          transform: scale(1);
+        }
+      }
+
+      /* Floating button with fiery effect */
+      #chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 70px;
+        height: 70px;
+        background: radial-gradient(circle, rgba(255, 69, 0, 1) 0%, rgba(255, 165, 0, 1) 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        animation: fireAnimation 1.5s infinite ease-in-out;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      /* Hover effect for more intensity */
+      #chatbot-button:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 40px 20px rgba(255, 69, 0, 0.8), 0 0 60px 30px rgba(255, 165, 0, 0.6);
+      }
+
+      /* CSS for the fireball icon */
+      #chatbot-button span {
+        font-size: 30px;
+        text-shadow: 0 0 5px rgba(255, 69, 0, 0.9), 0 0 10px rgba(255, 69, 0, 0.7);
+      }
+
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script
-    chatbot_id="68ff3bdf2e863969b17273c6"
-    data-type="bar"
-    src="https://app.thinkstack.ai/bot/thinkstackai-loader.min.js"
-></script>
+    
+    <!-- Button to toggle the chatbot -->
+    <button id="chatbot-button" onclick="toggleChatbot()">
+      <span>🤡</span>
+    </button>
+
+    <!-- Chatbot iframe -->
+    <iframe 
+      id="chatbot-iframe"
+      src="https://app.thinkstack.ai/bot/index.html?chatbot_id=68ff3bdf2e863969b17273c6&type=inline" 
+      frameborder="0">
+    </iframe>
+
+    <script>
+      // Function to toggle the chatbot iframe visibility
+      function toggleChatbot() {
+        const iframe = document.getElementById('chatbot-iframe');
+        iframe.style.display = iframe.style.display === 'none' || iframe.style.display === '' ? 'block' : 'none';
+      }
+    </script>
   </body>
 </html>
