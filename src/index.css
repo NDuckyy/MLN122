@@ -1,3 +1,181 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom animations and utility classes to make the site more lively. */
+@layer utilities {
+	/* Fade in entrance */
+	.animate-fade-in {
+		animation: fadeIn 600ms ease forwards;
+	}
+
+	/* Slight floating for icons */
+	.animate-float {
+		animation: float 3.6s ease-in-out infinite;
+	}
+
+	/* Small pop when selecting an item */
+	.animate-pop {
+		animation: pop 260ms cubic-bezier(.2,.9,.2,1) forwards;
+	}
+
+	/* Slow subtle pulse for badges */
+	.animate-pulse-slow {
+		animation: pulseSlow 2.4s ease-in-out infinite;
+	}
+
+	/* Scale in (useful for modals / quiz result) */
+	.animate-scale-in {
+		animation: scaleIn 420ms cubic-bezier(.2,.9,.2,1) forwards;
+	}
+
+	/* Reduced motion respect */
+	@media (prefers-reduced-motion: reduce) {
+		.animate-fade-in,
+		.animate-float,
+		.animate-pop,
+		.animate-pulse-slow,
+		.animate-scale-in {
+			animation: none !important;
+		}
+	}
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(8px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+	0%   { transform: translateY(0px); }
+	50%  { transform: translateY(-6px); }
+	100% { transform: translateY(0px); }
+}
+
+@keyframes pop {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.06); }
+	100% { transform: scale(1); }
+}
+
+@keyframes pulseSlow {
+	0% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.03); opacity: 0.9; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scaleIn {
+	from { transform: scale(.98); opacity: 0; }
+	to   { transform: scale(1); opacity: 1; }
+}
+
+/* Small helper to stagger animations via inline style using --delay */
+@layer components {
+	.animate-delay {
+		opacity: 0;
+		animation-delay: var(--delay, 0ms);
+	}
+}
+
+/* Global typography + subtle background blob styles */
+:root {
+	--page-bg: linear-gradient(180deg, #f8fafb 0%, #f1f5f9 100%);
+	--accent-500: #10b981; /* emerald-500 */
+}
+
+html, body, #root {
+	height: 100%;
+}
+
+body {
+	font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	background: var(--page-bg);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Floating soft gradient blobs for hero backgrounds */
+.bg-blob {
+	position: absolute;
+	border-radius: 50%;
+	filter: blur(40px) saturate(120%);
+	opacity: 0.7;
+	transform: translate3d(0,0,0);
+	mix-blend-mode: screen;
+	will-change: transform, opacity;
+}
+
+.blob-1 {
+	width: 420px;
+	height: 420px;
+	left: -80px;
+	top: -80px;
+	background: radial-gradient(circle at 20% 30%, rgba(16,185,129,0.18), rgba(16,185,129,0.08) 35%, transparent 60%);
+	animation: blobMove 14s ease-in-out infinite;
+}
+
+.blob-2 {
+	width: 360px;
+	height: 360px;
+	right: -60px;
+	top: 20px;
+	background: radial-gradient(circle at 80% 40%, rgba(14,165,233,0.12), rgba(99,102,241,0.06) 40%, transparent 65%);
+	animation: blobMove 18s ease-in-out infinite reverse;
+}
+
+@keyframes blobMove {
+	0% { transform: translateY(0) scale(1); }
+	50% { transform: translateY(-18px) scale(1.02); }
+	100% { transform: translateY(0) scale(1); }
+}
+
+/* Glass header helper */
+.glass-header {
+	background: rgba(255,255,255,0.7);
+	backdrop-filter: blur(6px) saturate(110%);
+}
+
+/* Footer small */
+.site-footer { color: #475569; }
+
+/* Confetti / star overlay styles (decorative fallback) */
+@layer utilities {
+	.confetti-overlay {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: 60;
+		overflow: hidden;
+	}
+
+	.confetti-star {
+		position: absolute;
+		width: 10px;
+		height: 10px;
+		background: conic-gradient(from 0deg, #fff6, #ffe06b, #ff9f9f, #bde0fe);
+		border-radius: 2px;
+		transform-origin: center;
+		opacity: 0;
+		animation: starFall var(--dur, 2200ms) cubic-bezier(.15,.8,.4,1) forwards;
+		will-change: transform, opacity;
+		filter: drop-shadow(0 6px 10px rgba(0,0,0,0.06));
+	}
+
+	@keyframes starFall {
+		0% {
+			opacity: 1;
+			transform: translateY(0) rotate(0) scale(1);
+		}
+		30% {
+			transform: translateY(20vh) rotate(180deg) scale(1.1);
+		}
+		65% {
+			transform: translateY(60vh) rotate(340deg) scale(0.9);
+			opacity: 1;
+		}
+		100% {
+			transform: translateY(110vh) rotate(540deg) scale(0.6);
+			opacity: 0;
+		}
+	}
+}

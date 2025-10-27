@@ -23,16 +23,18 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-50">
+      <header className="sticky top-0 z-50 glass-header shadow">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Target className="w-8 h-8 text-emerald-600" />
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-md">
+                <Target className="w-6 h-6 text-white" />
+              </div>
               <span className="text-xl font-bold text-slate-800">Kinh Tế Thị Trường</span>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-8">
+            <div className="hidden md:flex space-x-8 animate-fade-in" style={{ animationDelay: '80ms' }}>
               <button onClick={() => scrollToSection('gioi-thieu')} className="text-slate-700 hover:text-emerald-600 transition-colors font-medium">
                 Giới thiệu
               </button>
@@ -94,26 +96,31 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-20">
+      <section className="relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-20 animate-fade-in">
+        {/* decorative blobs */}
+        <div className="bg-blob blob-1" aria-hidden />
+        <div className="bg-blob blob-2" aria-hidden />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          <div className="text-center relative z-10">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-fade-in" style={{ animationDelay: '40ms' }}>
               Cạnh tranh và Độc quyền
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-emerald-50 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl mb-8 text-emerald-50 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '80ms' }}>
               Trong Nền Kinh Tế Thị Trường
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => scrollToSection('gioi-thieu')}
-                className="inline-flex items-center justify-center bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                className="inline-flex items-center justify-center bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 animate-fade-in"
+                style={{ animationDelay: '120ms' }}
               >
                 Khám phá ngay
                 <ChevronDown className="ml-2 w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowQuiz(true)}
-                className="inline-flex items-center justify-center bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                className="inline-flex items-center justify-center bg-white text-emerald-600 px-8 py-4 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200 animate-fade-in"
+                style={{ animationDelay: '160ms' }}
               >
                 <Brain className="mr-2 w-5 h-5" />
                 Làm quiz ngay
@@ -132,10 +139,10 @@ function App() {
             <div className="w-24 h-1 bg-emerald-600 mx-auto"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow animate-fade-in" style={{ animationDelay: '40ms' }}>
               <div className="flex items-start space-x-4">
-                <div className="bg-emerald-600 p-3 rounded-full flex-shrink-0">
+                <div className="bg-emerald-600 p-3 rounded-full flex-shrink-0 animate-float">
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -148,9 +155,9 @@ function App() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow animate-fade-in" style={{ animationDelay: '80ms' }}>
               <div className="flex items-start space-x-4">
-                <div className="bg-amber-600 p-3 rounded-full flex-shrink-0">
+                <div className="bg-amber-600 p-3 rounded-full flex-shrink-0 animate-float">
                   <Target className="w-6 h-6 text-white" />
                 </div>
                 <div>
