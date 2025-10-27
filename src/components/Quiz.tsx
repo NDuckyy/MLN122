@@ -20,19 +20,30 @@ export default function Quiz({ onBack }: QuizProps) {
   const [showResult, setShowResult] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [quizStartTime] = useState(Date.now());
+  const [quizStartTime, setQuizStartTime] = useState(Date.now());
   const [userName, setUserName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
   const [leaderboard, setLeaderboard] = useState<QuizResult[]>([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showConfettiOverlay, setShowConfettiOverlay] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeElapsed(Math.floor((Date.now() - quizStartTime) / 1000));
-    }, 1000);
+    let timer: ReturnType<typeof setInterval> | null = null;
 
-    return () => clearInterval(timer);
-  }, [quizStartTime]);
+    // Start the ticking only while the quiz is active (not on name input or results)
+    if (!showNameInput && !showResult) {
+      timer = setInterval(() => {
+        setTimeElapsed(Math.floor((Date.now() - quizStartTime) / 1000));
+      }, 1000);
+    } else {
+      // Ensure we capture the final elapsed time snapshot when quiz finishes
+      setTimeElapsed(Math.floor((Date.now() - quizStartTime) / 1000));
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [quizStartTime, showNameInput, showResult]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -127,7 +138,44 @@ export default function Quiz({ onBack }: QuizProps) {
     setShowExplanation(false);
     setUserName('');
     setShowLeaderboard(false);
+    // reset timer
+    setQuizStartTime(Date.now());
+    setTimeElapsed(0);
+    setShowNameInput(false);
   };
+
+  // trigger confetti via canvas-confetti if available, and show decorative overlay
+  const triggerConfetti = async () => {
+    try {
+      const confettiModule = await import('canvas-confetti');
+      const confetti = (confettiModule && (confettiModule as any).default) || confettiModule;
+
+      // a few bursts
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+      setTimeout(() => confetti({ particleCount: 40, spread: 100, scalar: 0.9, origin: { x: 0.1, y: 0.3 } }), 250);
+      setTimeout(() => confetti({ particleCount: 40, spread: 100, scalar: 0.9, origin: { x: 0.9, y: 0.3 } }), 400);
+    } catch (e) {
+      // module not installed or failed; ignore and allow CSS overlay fallback
+      // console.warn('confetti lib not available', e);
+    }
+  };
+
+  // show overlay stars when results are shown
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    if (showResult) {
+      triggerConfetti();
+      setShowConfettiOverlay(true);
+      t = setTimeout(() => setShowConfettiOverlay(false), 4800);
+    }
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [showResult]);
 
   const correctAnswers = answers.filter((a) => a.isCorrect).length;
   const score = calculateScore();
@@ -135,7 +183,7 @@ export default function Quiz({ onBack }: QuizProps) {
 
   if (showNameInput) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 animate-fade-in">
         <div className="max-w-md mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-6">
@@ -167,9 +215,25 @@ export default function Quiz({ onBack }: QuizProps) {
 
   if (showResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 animate-fade-in">
+        {showConfettiOverlay && (
+          <div className="confetti-overlay" aria-hidden>
+            {Array.from({ length: 24 }).map((_, i) => {
+              const left = Math.round(Math.random() * 10000) / 100;
+              const delay = Math.round(Math.random() * 600);
+              const dur = Math.round(1400 + Math.random() * 2600);
+              return (
+                <span
+                  key={i}
+                  className="confetti-star"
+                  style={{ left: `${left}%`, animationDelay: `${delay}ms`, ['--dur' as any]: `${dur}ms` }}
+                />
+              );
+            })}
+          </div>
+        )}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 animate-scale-in">
             <div className="text-center mb-8">
               <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
               <h2 className="text-3xl font-bold text-slate-800 mb-2">Kết quả của bạn</h2>
@@ -292,9 +356,9 @@ export default function Quiz({ onBack }: QuizProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4 animate-fade-in">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-8 animate-scale-in">
           <div className="flex items-center justify-between mb-8">
             <button
               onClick={onBack}
@@ -351,7 +415,7 @@ export default function Quiz({ onBack }: QuizProps) {
                         : isSelected
                         ? 'border-emerald-500 bg-emerald-50'
                         : 'border-slate-300 hover:border-emerald-300 bg-white'
-                    } ${showExplanation ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    } ${showExplanation ? 'cursor-not-allowed' : 'cursor-pointer'} ${isSelected ? 'animate-pop' : ''}`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-slate-800">{option}</span>
