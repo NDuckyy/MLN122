@@ -4,7 +4,7 @@ import Quiz from './components/Quiz';
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [, setActiveSection] = useState<string>('');
   const [showQuiz, setShowQuiz] = useState(false);
 
   const scrollToSection = (id: string) => {

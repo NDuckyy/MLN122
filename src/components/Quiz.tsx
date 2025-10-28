@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, Trophy, ArrowLeft, RotateCcw, Award } from 'lucide-react';
-import { quizQuestions, QuizQuestion } from '../data/quizQuestions';
+import { quizQuestions } from '../data/quizQuestions';
 import { supabase, QuizResult } from '../lib/supabase';
 
 interface QuizProps {
@@ -33,11 +33,12 @@ export default function Quiz({ onBack }: QuizProps) {
 
     // Start the ticking only while the quiz is active (not on name input or results)
     if (!showNameInput && !showResult) {
+      // quiz running: keep ticking
       timer = setInterval(() => {
         setTimeElapsed(Math.floor((Date.now() - quizStartTime) / 1000));
       }, 1000);
-    } else {
-      // Ensure we capture the final elapsed time snapshot when quiz finishes
+    } else if (showNameInput) {
+      // when entering the name input screen, snapshot the elapsed seconds
       setTimeElapsed(Math.floor((Date.now() - quizStartTime) / 1000));
     }
 
@@ -118,6 +119,8 @@ export default function Quiz({ onBack }: QuizProps) {
 
     // update UI immediately to results view and then refresh leaderboard
     setShowNameInput(false);
+    // ensure displayed time matches what we saved to the DB
+    setTimeElapsed(result.time_taken);
     setShowResult(true);
     await loadLeaderboard();
     setIsSaving(false);
