@@ -2,19 +2,70 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="theme-color" content="#0f766e" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cạnh Tranh Độc Quyền Kinh Tế</title>
+    <style>
+      /* CSS to position the iframe at the bottom-right */
+      iframe {
+        position: fixed;
+        bottom: 80px; /* Position above the button */
+        right: 20px;
+        width: 350px; 
+        height: 500px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: none; /* Initially hidden */
+      }
+
+      /* CSS for the floating button */
+      #chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        animation: sparkling 2s infinite;
+      }
+
+      /* Sparkling effect */
+      @keyframes sparkling {
+        0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+        100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script
-    chatbot_id="68ff3bdf2e863969b17273c6"
-    data-type="bar"
-    src="https://app.thinkstack.ai/bot/thinkstackai-loader.min.js"
-></script>
+    
+    <!-- Button to toggle the chatbot -->
+    <button id="chatbot-button" onclick="toggleChatbot()">💬</button>
+
+    <!-- Chatbot iframe -->
+    <iframe 
+      id="chatbot-iframe"
+      src="https://app.thinkstack.ai/bot/index.html?chatbot_id=68ff3bdf2e863969b17273c6&type=inline" 
+      frameborder="0">
+    </iframe>
+
+    <script>
+      // Function to toggle the chatbot iframe visibility
+      function toggleChatbot() {
+        const iframe = document.getElementById('chatbot-iframe');
+        iframe.style.display = iframe.style.display === 'none' || iframe.style.display === '' ? 'block' : 'none';
+      }
+    </script>
   </body>
 </html>
