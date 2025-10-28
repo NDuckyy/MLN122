@@ -26,6 +26,7 @@ export default function Quiz({ onBack }: QuizProps) {
   const [leaderboard, setLeaderboard] = useState<QuizResult[]>([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showConfettiOverlay, setShowConfettiOverlay] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -90,10 +91,13 @@ export default function Quiz({ onBack }: QuizProps) {
   };
 
   const saveResult = async () => {
+    if (isSaving) return; // prevent duplicate submissions
+
     if (!userName.trim()) {
       alert('Vui lòng nhập tên của bạn!');
       return;
     }
+    setIsSaving(true);
 
     const correctAnswers = answers.filter((a) => a.isCorrect).length;
     const score = calculateScore();
@@ -112,9 +116,11 @@ export default function Quiz({ onBack }: QuizProps) {
       console.error('Error saving result:', error);
     }
 
+    // update UI immediately to results view and then refresh leaderboard
     setShowNameInput(false);
     setShowResult(true);
-    loadLeaderboard();
+    await loadLeaderboard();
+    setIsSaving(false);
   };
 
   const loadLeaderboard = async () => {
@@ -198,14 +204,23 @@ export default function Quiz({ onBack }: QuizProps) {
               onChange={(e) => setUserName(e.target.value)}
               placeholder="Nhập tên của bạn"
               className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-emerald-500 focus:outline-none mb-6"
-              onKeyPress={(e) => e.key === 'Enter' && saveResult()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  saveResult();
+                }
+              }}
+              disabled={isSaving}
             />
 
             <button
               onClick={saveResult}
-              className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+              disabled={isSaving}
+              className={`w-full text-white py-3 rounded-lg font-semibold transition-colors ${
+                isSaving ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'
+              }`}
             >
-              Lưu kết quả
+              {isSaving ? 'Đang lưu...' : 'Lưu kết quả'}
             </button>
           </div>
         </div>
