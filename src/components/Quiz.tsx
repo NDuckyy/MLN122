@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock, Trophy, ArrowLeft, RotateCcw, Award } from 'lucide-react';
-import { quizQuestions } from '../data/quizQuestions';
-import { supabase, QuizResult } from '../lib/supabase';
+import { useState, useEffect } from "react";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Trophy,
+  ArrowLeft,
+  RotateCcw,
+  Award,
+} from "lucide-react";
+import { quizQuestions } from "../data/quizQuestions";
+import { supabase, QuizResult } from "../lib/supabase";
 
 interface QuizProps {
   onBack: () => void;
@@ -21,7 +29,7 @@ export default function Quiz({ onBack }: QuizProps) {
   const [showExplanation, setShowExplanation] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [quizStartTime, setQuizStartTime] = useState(Date.now());
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [showNameInput, setShowNameInput] = useState(false);
   const [leaderboard, setLeaderboard] = useState<QuizResult[]>([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -50,7 +58,7 @@ export default function Quiz({ onBack }: QuizProps) {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const handleOptionSelect = (optionIndex: number) => {
@@ -95,7 +103,7 @@ export default function Quiz({ onBack }: QuizProps) {
     if (isSaving) return; // prevent duplicate submissions
 
     if (!userName.trim()) {
-      alert('Vui lòng nhập tên của bạn!');
+      alert("Vui lòng nhập tên của bạn!");
       return;
     }
     setIsSaving(true);
@@ -111,10 +119,10 @@ export default function Quiz({ onBack }: QuizProps) {
       time_taken: timeElapsed,
     };
 
-    const { error } = await supabase.from('quiz_results').insert([result]);
+    const { error } = await supabase.from("quiz_results").insert([result]);
 
     if (error) {
-      console.error('Error saving result:', error);
+      console.error("Error saving result:", error);
     }
 
     // update UI immediately to results view and then refresh leaderboard
@@ -128,10 +136,10 @@ export default function Quiz({ onBack }: QuizProps) {
 
   const loadLeaderboard = async () => {
     const { data, error } = await supabase
-      .from('quiz_results')
-      .select('*')
-      .order('score', { ascending: false })
-      .order('time_taken', { ascending: true })
+      .from("quiz_results")
+      .select("*")
+      .order("score", { ascending: false })
+      .order("time_taken", { ascending: true })
       .limit(10);
 
     if (!error && data) {
@@ -145,7 +153,7 @@ export default function Quiz({ onBack }: QuizProps) {
     setSelectedOption(null);
     setShowResult(false);
     setShowExplanation(false);
-    setUserName('');
+    setUserName("");
     setShowLeaderboard(false);
     // reset timer
     setQuizStartTime(Date.now());
@@ -156,8 +164,9 @@ export default function Quiz({ onBack }: QuizProps) {
   // trigger confetti via canvas-confetti if available, and show decorative overlay
   const triggerConfetti = async () => {
     try {
-      const confettiModule = await import('canvas-confetti');
-      const confetti = (confettiModule && (confettiModule as any).default) || confettiModule;
+      const confettiModule = await import("canvas-confetti");
+      const confetti =
+        (confettiModule && (confettiModule as any).default) || confettiModule;
 
       // a few bursts
       confetti({
@@ -165,8 +174,26 @@ export default function Quiz({ onBack }: QuizProps) {
         spread: 70,
         origin: { y: 0.6 },
       });
-      setTimeout(() => confetti({ particleCount: 40, spread: 100, scalar: 0.9, origin: { x: 0.1, y: 0.3 } }), 250);
-      setTimeout(() => confetti({ particleCount: 40, spread: 100, scalar: 0.9, origin: { x: 0.9, y: 0.3 } }), 400);
+      setTimeout(
+        () =>
+          confetti({
+            particleCount: 40,
+            spread: 100,
+            scalar: 0.9,
+            origin: { x: 0.1, y: 0.3 },
+          }),
+        250
+      );
+      setTimeout(
+        () =>
+          confetti({
+            particleCount: 40,
+            spread: 100,
+            scalar: 0.9,
+            origin: { x: 0.9, y: 0.3 },
+          }),
+        400
+      );
     } catch (e) {
       // module not installed or failed; ignore and allow CSS overlay fallback
       // console.warn('confetti lib not available', e);
@@ -197,7 +224,9 @@ export default function Quiz({ onBack }: QuizProps) {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-6">
               <Award className="w-16 h-16 text-emerald-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">Hoàn thành!</h2>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                Hoàn thành!
+              </h2>
               <p className="text-slate-600">Nhập tên của bạn để lưu kết quả</p>
             </div>
 
@@ -208,7 +237,7 @@ export default function Quiz({ onBack }: QuizProps) {
               placeholder="Nhập tên của bạn"
               className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-emerald-500 focus:outline-none mb-6"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   e.preventDefault();
                   saveResult();
                 }
@@ -220,10 +249,12 @@ export default function Quiz({ onBack }: QuizProps) {
               onClick={saveResult}
               disabled={isSaving}
               className={`w-full text-white py-3 rounded-lg font-semibold transition-colors ${
-                isSaving ? 'bg-slate-300 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'
+                isSaving
+                  ? "bg-slate-300 cursor-not-allowed"
+                  : "bg-emerald-600 hover:bg-emerald-700"
               }`}
             >
-              {isSaving ? 'Đang lưu...' : 'Lưu kết quả'}
+              {isSaving ? "Đang lưu..." : "Lưu kết quả"}
             </button>
           </div>
         </div>
@@ -244,7 +275,11 @@ export default function Quiz({ onBack }: QuizProps) {
                 <span
                   key={i}
                   className="confetti-star"
-                  style={{ left: `${left}%`, animationDelay: `${delay}ms`, ['--dur' as any]: `${dur}ms` }}
+                  style={{
+                    left: `${left}%`,
+                    animationDelay: `${delay}ms`,
+                    ["--dur" as any]: `${dur}ms`,
+                  }}
                 />
               );
             })}
@@ -254,13 +289,17 @@ export default function Quiz({ onBack }: QuizProps) {
           <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 animate-scale-in">
             <div className="text-center mb-8">
               <Trophy className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-slate-800 mb-2">Kết quả của bạn</h2>
+              <h2 className="text-3xl font-bold text-slate-800 mb-2">
+                Kết quả của bạn
+              </h2>
               <p className="text-lg text-slate-600">Chúc mừng {userName}!</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl text-center">
-                <div className="text-4xl font-bold text-emerald-600 mb-2">{score}%</div>
+                <div className="text-4xl font-bold text-emerald-600 mb-2">
+                  {score}%
+                </div>
                 <div className="text-slate-600">Điểm số</div>
               </div>
 
@@ -272,7 +311,9 @@ export default function Quiz({ onBack }: QuizProps) {
               </div>
 
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl text-center">
-                <div className="text-4xl font-bold text-purple-600 mb-2">{formatTime(timeElapsed)}</div>
+                <div className="text-4xl font-bold text-purple-600 mb-2">
+                  {formatTime(timeElapsed)}
+                </div>
                 <div className="text-slate-600">Thời gian</div>
               </div>
             </div>
@@ -284,7 +325,9 @@ export default function Quiz({ onBack }: QuizProps) {
                   <div
                     key={q.id}
                     className={`p-4 rounded-lg border-2 ${
-                      answer.isCorrect ? 'border-emerald-500 bg-emerald-50' : 'border-red-500 bg-red-50'
+                      answer.isCorrect
+                        ? "border-emerald-500 bg-emerald-50"
+                        : "border-red-500 bg-red-50"
                     }`}
                   >
                     <div className="flex items-start space-x-3">
@@ -299,7 +342,8 @@ export default function Quiz({ onBack }: QuizProps) {
                         </p>
                         {!answer.isCorrect && (
                           <p className="text-sm text-slate-600">
-                            <span className="font-semibold">Đáp án đúng:</span> {q.options[q.correctAnswer]}
+                            <span className="font-semibold">Đáp án đúng:</span>{" "}
+                            {q.options[q.correctAnswer]}
                           </p>
                         )}
                       </div>
@@ -315,7 +359,9 @@ export default function Quiz({ onBack }: QuizProps) {
                 className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
               >
                 <Trophy className="w-5 h-5" />
-                <span>{showLeaderboard ? 'Ẩn bảng xếp hạng' : 'Xem bảng xếp hạng'}</span>
+                <span>
+                  {showLeaderboard ? "Ẩn bảng xếp hạng" : "Xem bảng xếp hạng"}
+                </span>
               </button>
 
               <button
@@ -338,19 +384,21 @@ export default function Quiz({ onBack }: QuizProps) {
 
           {showLeaderboard && leaderboard.length > 0 && (
             <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center">Bảng xếp hạng Top 10</h3>
+              <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center">
+                Bảng xếp hạng Top 10
+              </h3>
               <div className="space-y-3">
                 {leaderboard.map((result, index) => (
                   <div
                     key={result.id}
                     className={`flex items-center justify-between p-4 rounded-lg ${
                       index === 0
-                        ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white'
+                        ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white"
                         : index === 1
-                        ? 'bg-gradient-to-r from-slate-300 to-slate-400 text-slate-800'
+                        ? "bg-gradient-to-r from-slate-300 to-slate-400 text-slate-800"
                         : index === 2
-                        ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white'
-                        : 'bg-slate-50'
+                        ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white"
+                        : "bg-slate-50"
                     }`}
                   >
                     <div className="flex items-center space-x-4">
@@ -358,7 +406,8 @@ export default function Quiz({ onBack }: QuizProps) {
                       <div>
                         <div className="font-semibold">{result.user_name}</div>
                         <div className="text-sm opacity-75">
-                          {result.correct_answers}/{result.total_questions} câu đúng · {formatTime(result.time_taken)}
+                          {result.correct_answers}/{result.total_questions} câu
+                          đúng · {formatTime(result.time_taken)}
                         </div>
                       </div>
                     </div>
@@ -388,7 +437,9 @@ export default function Quiz({ onBack }: QuizProps) {
 
             <div className="flex items-center space-x-2 text-slate-600">
               <Clock className="w-5 h-5" />
-              <span className="font-mono font-semibold">{formatTime(timeElapsed)}</span>
+              <span className="font-mono font-semibold">
+                {formatTime(timeElapsed)}
+              </span>
             </div>
           </div>
 
@@ -405,20 +456,27 @@ export default function Quiz({ onBack }: QuizProps) {
             <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
               <div
                 className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full transition-all duration-300"
-                style={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
+                style={{
+                  width: `${
+                    ((currentQuestion + 1) / quizQuestions.length) * 100
+                  }%`,
+                }}
               />
             </div>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6">{question.question}</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">
+              {question.question}
+            </h2>
 
             <div className="space-y-3">
               {question.options.map((option, index) => {
                 const isSelected = selectedOption === index;
                 const isCorrect = index === question.correctAnswer;
                 const showCorrect = showExplanation && isCorrect;
-                const showIncorrect = showExplanation && isSelected && !isCorrect;
+                const showIncorrect =
+                  showExplanation && isSelected && !isCorrect;
 
                 return (
                   <button
@@ -427,18 +485,24 @@ export default function Quiz({ onBack }: QuizProps) {
                     disabled={showExplanation}
                     className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                       showCorrect
-                        ? 'border-emerald-500 bg-emerald-50'
+                        ? "border-emerald-500 bg-emerald-50"
                         : showIncorrect
-                        ? 'border-red-500 bg-red-50'
+                        ? "border-red-500 bg-red-50"
                         : isSelected
-                        ? 'border-emerald-500 bg-emerald-50'
-                        : 'border-slate-300 hover:border-emerald-300 bg-white'
-                    } ${showExplanation ? 'cursor-not-allowed' : 'cursor-pointer'} ${isSelected ? 'animate-pop' : ''}`}
+                        ? "border-emerald-500 bg-emerald-50"
+                        : "border-slate-300 hover:border-emerald-300 bg-white"
+                    } ${
+                      showExplanation ? "cursor-not-allowed" : "cursor-pointer"
+                    } ${isSelected ? "animate-pop" : ""}`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-slate-800">{option}</span>
-                      {showCorrect && <CheckCircle className="w-6 h-6 text-emerald-600" />}
-                      {showIncorrect && <XCircle className="w-6 h-6 text-red-600" />}
+                      {showCorrect && (
+                        <CheckCircle className="w-6 h-6 text-emerald-600" />
+                      )}
+                      {showIncorrect && (
+                        <XCircle className="w-6 h-6 text-red-600" />
+                      )}
                     </div>
                   </button>
                 );
@@ -449,7 +513,9 @@ export default function Quiz({ onBack }: QuizProps) {
           {showExplanation && (
             <div className="mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-lg">
               <h3 className="font-bold text-blue-900 mb-2">Giải thích:</h3>
-              <p className="text-blue-800 leading-relaxed">{question.explanation}</p>
+              <p className="text-blue-800 leading-relaxed">
+                {question.explanation}
+              </p>
             </div>
           )}
 
@@ -460,8 +526,8 @@ export default function Quiz({ onBack }: QuizProps) {
                 disabled={selectedOption === null}
                 className={`w-full py-4 rounded-lg font-semibold text-white transition-all ${
                   selectedOption === null
-                    ? 'bg-slate-300 cursor-not-allowed'
-                    : 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg'
+                    ? "bg-slate-300 cursor-not-allowed"
+                    : "bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg"
                 }`}
               >
                 Xác nhận
@@ -471,7 +537,9 @@ export default function Quiz({ onBack }: QuizProps) {
                 onClick={handleNextQuestion}
                 className="w-full py-4 rounded-lg font-semibold text-white bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg transition-all"
               >
-                {currentQuestion < quizQuestions.length - 1 ? 'Câu tiếp theo' : 'Hoàn thành'}
+                {currentQuestion < quizQuestions.length - 1
+                  ? "Câu tiếp theo"
+                  : "Hoàn thành"}
               </button>
             )}
           </div>
